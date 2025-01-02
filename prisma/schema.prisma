@@ -1,71 +1,132 @@
 
-        generator client {
-          provider = "prisma-client-js"
-        }
+  generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  }
+  
+  datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+  }
         
-        datasource db {
-          provider = "postgresql"
-          url      = "postgresql://opengig:Database2024!@opengigmvp.postgres.database.azure.com:5432/hi2aa1a043?schema=public"
-        }
-      
 model User {
-    id          Int       @id @default(autoincrement())
-    email       String    @unique
-    password    String?
-    username    String
-    name        String?
-    role        String?   @default("user")
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    courses     Course[]  @relation("CourseTutor")
-    enrollments Enrollment[]
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  email         String          @unique
+  password      String?
+  username      String          @unique
+  name          String?
+  role          String          @default("buyer")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now())
+  
+  vendorProfile VendorProfile?
+  buyerProfile  BuyerProfile?
+  listings      Listing[]       @relation("VendorListings")
+  payments      Payment[]
+  dashboard     BuyerDashboard?
+  bookings      Booking[]
+  vendorDashboard VendorDashboard?
+
+  @@map("users")
 }
 
-model Course {
-    id          Int        @id @default(autoincrement())
-    tutorId     Int
-    title       String
-    description String?
-    zoomLink    String?
-    price       Float
-    createdAt   DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
-    tutor       User       @relation("CourseTutor", fields: [tutorId], references: [id])
-    slots       CourseSlot[]
-    enrollments Enrollment[]
+model VendorProfile {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  businessName String
+  contactInfo  String
+  logoUrl      String?
+  userId       String   @unique @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@map("vendor_profiles")
 }
 
-model CourseSlot {
-    id         Int      @id @default(autoincrement())
-    courseId   Int
-    startTime  DateTime
-    endTime    DateTime
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
-    course     Course   @relation(fields: [courseId], references: [id])
+model BuyerProfile {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  paymentDetails Json?
+  userId       String   @unique @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@map("buyer_profiles")
 }
 
-model Enrollment {
-    id            Int      @id @default(autoincrement())
-    studentId     Int
-    courseId      Int
-    enrollmentDate DateTime @default(now())
-    paymentStatus String
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    student       User     @relation(fields: [studentId], references: [id])
-    course        Course   @relation(fields: [courseId], references: [id])
-    payment       Payment?
+model Listing {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  price       Float
+  availability Json
+  amenities   Json
+  images      Json
+  vendorId    String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  vendor      User     @relation("VendorListings", fields: [vendorId], references: [id])
+  bookings    Booking[]
+
+  @@map("listings")
+}
+
+model Booking {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  listingId   String   @db.ObjectId
+  userId      String   @db.ObjectId
+  startDate   DateTime
+  endDate     DateTime
+  paymentId   String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  listing     Listing  @relation(fields: [listingId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("bookings")
 }
 
 model Payment {
-    id            Int      @id @default(autoincrement())
-    enrollmentId  Int      @unique
-    amount        Float
-    paymentMethod String
-    paymentDate   DateTime @default(now())
-    status        String
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    enrollment    Enrollment @relation(fields: [enrollmentId], references: [id])
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount        Float
+  paymentStatus String
+  paymentDate   DateTime @default(now())
+  userId        String   @db.ObjectId
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@map("payments")
+}
+
+model VendorDashboard {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @unique @db.ObjectId
+  totalListings Int     @default(0)
+  totalBookings Int     @default(0)
+  totalRevenue Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("vendor_dashboards")
+}
+
+model BuyerDashboard {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @unique @db.ObjectId
+  totalBookings Int     @default(0)
+  totalSpent  Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("buyer_dashboards")
 }

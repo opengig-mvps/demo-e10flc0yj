@@ -14,7 +14,6 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const { data: session } = useSession();
 
   const loginUser = async (e: React.FormEvent) => {
@@ -27,7 +26,7 @@ const LoginPage = () => {
         password,
       });
       if (res?.ok) {
-        router.push(`/dashboard/${session?.user?.role ?? "user"}`);
+        router.push(`/dashboard`);
       } else {
         toast.error(res?.error ?? "An error occurred");
       }
@@ -96,21 +95,6 @@ const LoginPage = () => {
               )}
             </Button>
           </div>
-          <Button
-            disabled={googleLoading}
-            variant="outline"
-            className="w-full"
-            onClick={async () => {
-              setGoogleLoading(true);
-              await signIn("google", {
-                callbackUrl: `/dashboard`,
-              });
-              setGoogleLoading(false);
-            }}
-          >
-            {googleLoading && <Loader2 className="animate-spin mr-2" />} Sign in
-            with Google
-          </Button>
         </form>
       </div>
     </div>

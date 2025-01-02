@@ -1,0 +1,133 @@
+{
+  "items": [
+    {
+      "url": "/api/users/password-recovery/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "POST"
+    },
+    {
+      "url": "/api/users/reset-password/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "POST"
+    },
+    {
+      "url": "/api/users/verify-email/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "POST"
+    },
+    {
+      "url": "/api/vendors/[vendorId]/profile/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "PATCH"
+    },
+    {
+      "url": "/api/buyers/[buyerId]/profile/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "PATCH"
+    },
+    {
+      "url": "/api/listings/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "POST"
+    },
+    {
+      "url": "/api/listings/[listingId]/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "PATCH"
+    },
+    {
+      "url": "/api/listings/search/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "GET"
+    },
+    {
+      "url": "/api/bookings/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "POST"
+    },
+    {
+      "url": "/api/payments/stripe/create-session/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "POST"
+    },
+    {
+      "url": "/api/payments/stripe/webhook/route.ts",
+      "type": "api",
+      "status": "success",
+      "method": "POST"
+    },
+    {
+      "url": "dashboard/vendor/profile/page.tsx",
+      "type": "page",
+      "status": "success",
+      "userType": "vendor",
+      "access": "private"
+    },
+    {
+      "url": "dashboard/buyer/profile/page.tsx",
+      "type": "page",
+      "status": "success",
+      "userType": "buyer",
+      "access": "private"
+    },
+    {
+      "url": "dashboard/vendor/listings/page.tsx",
+      "type": "page",
+      "status": "success",
+      "userType": "vendor",
+      "access": "private"
+    },
+    {
+      "url": "dashboard/buyer/search/page.tsx",
+      "type": "page",
+      "status": "success",
+      "userType": "buyer",
+      "access": "public"
+    },
+    {
+      "url": "dashboard/buyer/booking/page.tsx",
+      "type": "page",
+      "status": "success",
+      "userType": "buyer",
+      "access": "private"
+    },
+    {
+      "url": "dashboard/vendor/dashboard/page.tsx",
+      "type": "page",
+      "status": "success",
+      "userType": "vendor",
+      "access": "private"
+    },
+    {
+      "url": "dashboard/buyer/dashboard/page.tsx",
+      "type": "page",
+      "status": "success",
+      "userType": "buyer",
+      "access": "private"
+    },
+    {
+      "url": "/(auth)/register/page.tsx",
+      "type": "page",
+      "status": "success",
+      "access": "public",
+      "userType": "all"
+    },
+    {
+      "url": "/(auth)/login/page.tsx",
+      "type": "page",
+      "status": "success",
+      "access": "public",
+      "userType": "all"
+    }
+  ]
+}

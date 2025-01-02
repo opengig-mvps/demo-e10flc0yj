@@ -12,18 +12,28 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
-import { Loader2, LoaderCircleIcon } from "lucide-react";
+import { LoaderCircleIcon } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { toast } from "sonner";
 import axios, { isAxiosError } from "axios";
+
+const roles = [
+  {
+    value: "vendor",
+    label: "Vendor",
+  },
+  {
+    value: "buyer",
+    label: "Buyer",
+  },
+];
 
 const SignupPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState(roles.length === 1 ? roles[0].value : "");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -60,6 +70,7 @@ const SignupPage = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="flex items-center justify-center h-full  px-4 py-12 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 sm:p-8">
@@ -107,18 +118,23 @@ const SignupPage = () => {
               placeholder="name@example.com"
             />
           </div>
-          <div>
-            <Label htmlFor="role">Role</Label>
-            <Select required onValueChange={setRole} value={role}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Select your role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tutor">Tutor</SelectItem>
-                <SelectItem value="student">Student</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {roles.length > 1 && (
+            <div>
+              <Label htmlFor="role">Role</Label>
+              <Select required onValueChange={setRole} value={role}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select your role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {roles.map((role) => (
+                    <SelectItem key={role.value} value={role.value}>
+                      {role.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div>
             <Label htmlFor="password">Password</Label>
             <Input
@@ -139,21 +155,6 @@ const SignupPage = () => {
             ) : (
               "Sign up"
             )}
-          </Button>
-          <Button
-            disabled={googleLoading}
-            variant="outline"
-            className="w-full"
-            onClick={async () => {
-              setGoogleLoading(true);
-              await signIn("google", {
-                callbackUrl: `/dashboard`,
-              });
-              setGoogleLoading(false);
-            }}
-          >
-            {googleLoading && <Loader2 className="animate-spin mr-2" />} Sign in
-            with Google
           </Button>
         </form>
       </div>
